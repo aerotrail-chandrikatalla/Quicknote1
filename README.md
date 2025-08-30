@@ -1,66 +1,95 @@
-﻿# Quicknote1
+📒 #Quicknote1
 
-This project is a Firefox/Chrome extension that lets you create notes via a popup UI.
-The notes are sent to a FastAPI backend running locally, which handles storing/returning the data.
+Quicknote1 is a browser extension with a FastAPI backend that lets you quickly save notes (title + description) into a local SQLite database.
 
-📂 Project Structure
-Quicknote1/
-│── extension/
-│    ├── manifest.json
-│    ├── popup.html
-│    └── popup.js
-│
-│── backend/
-│    └── main.py
-│
-│── venv/                # Python virtual environment
+⚡ Features
 
-⚙️ Setup Instructions
-1. Create and activate virtual environment
+✍️ Save notes (title + description) via extension popup
+
+💾 Automatically stores data into SQLite (notes.db)
+
+⚡ FastAPI backend for handling note storage
+
+🖥️ Simple REST API (POST request for new notes, GET for fetching notes)
+
+🗃️ Lightweight database (notes.db) created automatically
+
+🛠️ Setup Instructions
+1️⃣ Clone the repository
+git clone https://github.com/aerotrail-chandrikatalla/Quicknote1.git
 cd Quicknote1
-python -m venv venv
-.\venv\Scripts\activate
 
-2. Install dependencies
+2️⃣ Setup Python environment
+
+Create and activate a virtual environment:
+
+# Windows (PowerShell)
+python -m venv env
+.\env\Scripts\activate
+
+# Mac/Linux
+python3 -m venv env
+source env/bin/activate
+
+
+Install dependencies:
+
 pip install fastapi uvicorn
 
-3. Run FastAPI backend
+
+(SQLite is built into Python, no need to install separately.)
+
+3️⃣ Run the backend server
+
+Inside the project folder:
+
 uvicorn backend.main:app --reload
 
 
-Backend will run at: http://127.0.0.1:8000
+Server runs at: http://127.0.0.1:8000
 
-Interactive API docs: http://127.0.0.1:8000/docs
+On first run, a notes.db file is created with a notes table
 
-🧩 Extension Setup
+4️⃣ Test the API
+Add a note
+curl -X POST "http://127.0.0.1:8000/notes/" ^
+-H "Content-Type: application/json" ^
+-d "{\"title\":\"Test Note\", \"description\":\"This is a sample description.\"}"
 
-Open Firefox (or Chrome).
+Fetch all notes
+curl http://127.0.0.1:8000/notes/
 
-Go to about:debugging#/runtime/this-firefox (or chrome://extensions).
+5️⃣ Check the database manually
 
-Click Load Temporary Add-on → select the extension/manifest.json.
+Run this script inside backend/:
 
-The extension will now appear in your browser toolbar.
+python show_notes.py
 
-🚀 How It Works
 
-Open the extension popup.
+It will print all notes from notes.db.
 
-Enter a title and description → click Submit.
+🚫 Git Ignore Database
 
-The popup JS sends a POST request to http://127.0.0.1:8000/notes.
+⚠️ Don’t commit notes.db to git. Add this to .gitignore:
 
-Backend (FastAPI) responds → popup shows “Note created successfully!”
+*.db
 
-📜 Commands Used
-# Create virtual environment
-python -m venv venv
+🧑‍💻 Project Structure
+Quicknote1/
+│── backend/
 
-# Activate environment
-.\venv\Scripts\activate
+│   ├── main.py          # FastAPI app
 
-# Install dependencies
-pip install fastapi uvicorn
+│   ├── show_notes.py    # Debug: view saved notes
 
-# Run FastAPI server
-uvicorn backend.main:app --reload
+│   └── notes.db         # SQLite database (auto-created, ignored in git)
+
+│
+
+│── manifest.json        # Chrome extension manifest
+
+│── popup.html           # Extension popup
+
+│── popup.js             # Handles note saving
+
+│── README.md            # This file
